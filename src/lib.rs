@@ -10,10 +10,15 @@ use leptos_router::path;
 use pages::gallery::Gallery;
 use pages::template_view::TemplateView;
 
+#[cfg(debug_assertions)]
+const BASE_PATH: &str = "";
+#[cfg(not(debug_assertions))]
+const BASE_PATH: &str = "/markdown-boxes";
+
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <Router>
+        <Router base=BASE_PATH>
             <div class="app">
                 <header>
                     <a href="/" class="logo">"Markdown Boxes"</a>

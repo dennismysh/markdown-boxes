@@ -1,5 +1,65 @@
 [
   {
+    "slug": "dashboard",
+    "title": "Analytics Dashboard",
+    "category": "design-prompt",
+    "tags": [
+      "design",
+      "dashboard",
+      "charts",
+      "data-visualization",
+      "ui"
+    ],
+    "preview": null,
+    "description": "AI prompt for designing an analytics dashboard with charts, KPIs, and data filters.",
+    "placeholders": [
+      {
+        "key": "product_name",
+        "label": "Product Name",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "metrics",
+        "label": "Key Metrics (comma-separated, e.g. revenue, users, conversion rate)",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "chart_types",
+        "label": "Primary Chart Type",
+        "type": "select",
+        "options": [
+          "Line charts",
+          "Bar charts",
+          "Mix of chart types"
+        ]
+      },
+      {
+        "key": "time_range",
+        "label": "Default Time Range",
+        "type": "select",
+        "options": [
+          "Last 7 days",
+          "Last 30 days",
+          "Last 90 days",
+          "Custom range"
+        ]
+      },
+      {
+        "key": "theme",
+        "label": "Visual Theme",
+        "type": "select",
+        "options": [
+          "Dark professional",
+          "Light minimal",
+          "Colorful modern"
+        ]
+      }
+    ],
+    "body": "# Design Prompt: {{product_name}} Dashboard\n\n## Context\n\nDesign an analytics dashboard for **{{product_name}}** that displays these key metrics: {{metrics}}.\n\n## Layout\n\n### Top Bar\n- Product logo + name on the left\n- Time range selector: {{time_range}} (with custom date picker option)\n- Refresh button with last-updated timestamp\n\n### KPI Cards Row\n- One card per key metric\n- Each shows: current value, trend (up/down arrow + percentage), sparkline\n- Cards should be scannable at a glance\n\n### Charts Section\n- Primary visualization: {{chart_types}}\n- Each chart has a title, legend, and tooltip on hover\n- Charts should be responsive and stack vertically on mobile\n\n### Data Table\n- Below charts, a sortable table with the raw data\n- Columns match the key metrics\n- Search/filter capability\n- Export to CSV button\n\n## Visual Style\n\nTheme: {{theme}}\n\n### Design Principles\n- Data-ink ratio: maximize information, minimize decoration\n- Consistent color coding across all charts and KPIs\n- Clear visual hierarchy: KPIs > charts > table\n- Use whitespace to separate sections, not heavy borders\n\n## Technical Notes\n- Charts should animate on load (subtle, not distracting)\n- Skeleton loading states while data fetches\n- Responsive: works from 375px to 2560px\n- Accessible: all chart data available in table form"
+  },
+  {
     "slug": "auth-flow",
     "title": "Authentication Flow",
     "category": "implementation-plan",
@@ -49,6 +109,128 @@
       }
     ],
     "body": "# {{project_name}} — Authentication Flow\n\n## Overview\n\nBuild a JWT-based auth system for {{project_name}} using {{auth_provider}} with {{framework}}.\n\n## Step 1: User Registration\n\nCreate the registration endpoint that accepts email and password:\n- Hash passwords with bcrypt (cost factor 12)\n- Validate email format and password strength\n- Store user in database\n- Return JWT access token + refresh token\n\n## Step 2: Login Flow\n\nImplement the login endpoint:\n- Verify credentials against stored hash\n- Generate short-lived access token (15 min)\n- Generate long-lived refresh token (7 days)\n- Set refresh token as httpOnly cookie\n\n## Step 3: Token Refresh\n\nCreate the refresh endpoint:\n- Validate refresh token from cookie\n- Issue new access + refresh token pair\n- Rotate refresh tokens (invalidate old one)\n\n## Step 4: Protected Routes\n\nAdd auth middleware:\n- Extract JWT from Authorization header\n- Verify signature and expiration\n- Attach user context to request\n- Return 401 for invalid/expired tokens\n\n## Step 5: Logout\n\nImplement logout:\n- Invalidate refresh token server-side\n- Clear httpOnly cookie\n- Client clears stored access token\n\n## Additional Notes\n\n{{additional_requirements}}"
+  },
+  {
+    "slug": "background-jobs",
+    "title": "Background Job Processing",
+    "category": "backend-pattern",
+    "tags": [
+      "jobs",
+      "queue",
+      "async",
+      "workers",
+      "backend"
+    ],
+    "preview": null,
+    "description": "Prompt for implementing a background job processing system with queues, retries, and monitoring.",
+    "placeholders": [
+      {
+        "key": "job_types",
+        "label": "Job Types (comma-separated, e.g. email, pdf-generation, data-sync)",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "framework",
+        "label": "Backend Framework",
+        "type": "select",
+        "options": [
+          "Node.js + BullMQ",
+          "Python + Celery",
+          "Ruby + Sidekiq",
+          "Go + Asynq"
+        ]
+      },
+      {
+        "key": "priority_levels",
+        "label": "Number of Priority Levels",
+        "type": "select",
+        "options": [
+          "2 (high/low)",
+          "3 (high/medium/low)",
+          "1 (no priority)"
+        ]
+      },
+      {
+        "key": "retry_strategy",
+        "label": "Retry Strategy",
+        "type": "select",
+        "options": [
+          "Exponential backoff",
+          "Fixed interval",
+          "No retries"
+        ]
+      }
+    ],
+    "body": "# Background Job Processing\n\n## Overview\n\nImplement a background job processing system using {{framework}} to handle these job types: {{job_types}}.\n\n## Architecture\n\n### Queue Setup\n- Separate queues per job type for isolation\n- Priority levels: {{priority_levels}}\n- Dead letter queue for permanently failed jobs\n\n### Workers\n- One worker process per queue (can scale horizontally)\n- Concurrency: 5 jobs per worker (configurable)\n- Graceful shutdown on SIGTERM\n\n### Job Lifecycle\n1. **Enqueued** — job created with payload, placed in queue\n2. **Active** — worker picks up the job\n3. **Completed** — success, job removed from queue\n4. **Failed** — error occurred, retry scheduled\n5. **Dead** — max retries exhausted, moved to dead letter queue\n\n## Retry Strategy\n\nStrategy: {{retry_strategy}}\n\n- Max retries: 3\n- Backoff: 30s, 2min, 10min (exponential) or 60s fixed\n- Failures logged with full error + stack trace\n\n## Job Interface\n\nEach job handler receives:\n- `payload` — serialized JSON data\n- `attempt` — current attempt number (1-based)\n- `job_id` — unique identifier for tracking\n\nEach job handler must:\n- Be idempotent (safe to retry)\n- Complete within a timeout (default: 5 minutes)\n- Throw on failure (triggers retry)\n\n## Monitoring\n\n- Dashboard showing: active, waiting, completed, failed counts\n- Alerts when dead letter queue has items\n- Per-job execution time tracking"
+  },
+  {
+    "slug": "ci-cd-pipeline",
+    "title": "CI/CD Pipeline Setup",
+    "category": "implementation-plan",
+    "tags": [
+      "ci",
+      "cd",
+      "devops",
+      "testing",
+      "deployment",
+      "github-actions"
+    ],
+    "preview": null,
+    "description": "Step-by-step plan for setting up a CI/CD pipeline with testing, linting, building, and automated deployment.",
+    "placeholders": [
+      {
+        "key": "project_name",
+        "label": "Project Name",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "language",
+        "label": "Language / Runtime",
+        "type": "select",
+        "options": [
+          "TypeScript / Node.js",
+          "Python",
+          "Rust",
+          "Go",
+          "Java / Kotlin"
+        ]
+      },
+      {
+        "key": "ci_platform",
+        "label": "CI/CD Platform",
+        "type": "select",
+        "options": [
+          "GitHub Actions",
+          "GitLab CI",
+          "CircleCI"
+        ]
+      },
+      {
+        "key": "deploy_target",
+        "label": "Deployment Target",
+        "type": "select",
+        "options": [
+          "AWS (ECS/Lambda)",
+          "Vercel",
+          "Netlify",
+          "Docker + VPS",
+          "Kubernetes"
+        ]
+      },
+      {
+        "key": "test_strategy",
+        "label": "Testing Strategy",
+        "type": "select",
+        "options": [
+          "Unit + Integration",
+          "Unit + Integration + E2E",
+          "Unit only"
+        ]
+      }
+    ],
+    "body": "# {{project_name}} — CI/CD Pipeline\n\n## Overview\n\nSet up automated CI/CD for {{project_name}} ({{language}}) using {{ci_platform}}, deploying to {{deploy_target}}.\n\n## Pipeline Stages\n\n### 1. Lint & Format Check\n- Run linter (eslint / ruff / clippy / golangci-lint)\n- Check code formatting (prettier / black / rustfmt / gofmt)\n- Fail fast — don't run tests if lint fails\n\n### 2. Test\n- Strategy: {{test_strategy}}\n- Run tests in parallel where possible\n- Generate coverage report\n- Fail if coverage drops below threshold (80%)\n\n### 3. Build\n- Compile / bundle the application\n- Verify build output is valid\n- Cache dependencies between runs\n\n### 4. Deploy\n- Target: {{deploy_target}}\n- Deploy to staging on push to `develop`\n- Deploy to production on push to `main`\n- Require manual approval for production (optional)\n\n## Branch Strategy\n\n| Branch | Trigger | Deploy To |\n|--------|---------|-----------|\n| Feature branches | PR opened/updated | — (CI only) |\n| develop | Push / merge | Staging |\n| main | Push / merge | Production |\n\n## Environment Variables\n\n- Store secrets in CI platform's secret store\n- Never commit .env files\n- Separate configs for staging vs production\n\n## Notifications\n\n- Slack/Discord notification on deploy success/failure\n- PR status checks block merge on failure\n- Weekly summary of deployment frequency + failure rate\n\n## Rollback Plan\n\n- Keep last 3 successful deployments available\n- One-click rollback to previous version\n- Database migrations must be backwards-compatible"
   },
   {
     "slug": "data-table",
@@ -154,5 +336,119 @@
       }
     ],
     "body": "# Design Prompt: {{product_name}} Landing Page\n\n## Context\n\nDesign a modern landing page for **{{product_name}}**.\n\nTagline: \"{{tagline}}\"\n\nProduct description: {{product_description}}\n\n## Design Requirements\n\n**Color scheme:** {{color_scheme}}\n\n### Hero Section\n- Large headline with the tagline\n- Brief subtitle expanding on the value proposition\n- Primary CTA button (\"Get Started\" or similar)\n- Hero image or illustration on the right\n\n### Features Section\n- {{num_features}} feature cards in a grid\n- Each card: icon, title, 1-2 sentence description\n- Clean spacing, consistent alignment\n\n### Social Proof\n- Testimonial quotes or company logos\n- Usage statistics if available\n\n### Footer CTA\n- Repeated call to action\n- Secondary link to documentation or pricing\n\n## Technical Constraints\n- Responsive: mobile-first, works at 320px-1440px+\n- Performance: no layout shift, lazy-load images\n- Accessibility: WCAG 2.1 AA compliant"
+  },
+  {
+    "slug": "form-wizard",
+    "title": "Multi-Step Form Wizard",
+    "category": "ui-component",
+    "tags": [
+      "form",
+      "wizard",
+      "stepper",
+      "ui",
+      "component"
+    ],
+    "preview": null,
+    "description": "Prompt for building a multi-step form with validation, progress indicator, and state management.",
+    "placeholders": [
+      {
+        "key": "framework",
+        "label": "UI Framework",
+        "type": "select",
+        "options": [
+          "React",
+          "Vue",
+          "Svelte",
+          "Solid"
+        ]
+      },
+      {
+        "key": "num_steps",
+        "label": "Number of Steps",
+        "type": "select",
+        "options": [
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      {
+        "key": "step_names",
+        "label": "Step Names (comma-separated, e.g. Account, Profile, Preferences)",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "styling",
+        "label": "Styling Approach",
+        "type": "select",
+        "options": [
+          "Tailwind CSS",
+          "CSS Modules",
+          "Styled Components",
+          "Plain CSS"
+        ]
+      }
+    ],
+    "body": "# Multi-Step Form Wizard\n\n## Prompt\n\nBuild a {{num_steps}}-step form wizard in {{framework}} with {{styling}}.\n\n### Steps\n\nThe form has these steps: {{step_names}}\n\n### Progress Indicator\n- Horizontal stepper bar at the top\n- Shows: step number, step name, completion status\n- States: completed (checkmark), current (highlighted), upcoming (dimmed)\n- Clickable to navigate back to completed steps (not forward)\n\n### Navigation\n- \"Next\" button advances to next step (validates current step first)\n- \"Back\" button returns to previous step (preserves input)\n- \"Submit\" button on final step\n- Keyboard: Enter advances, Escape goes back\n\n### Validation\n- Per-step validation on \"Next\" click\n- Inline error messages below each invalid field\n- Highlight invalid fields with red border\n- Don't allow advancing until current step is valid\n\n### State Management\n- Preserve all input when navigating between steps\n- Form state survives page refresh (localStorage)\n- Clear state on successful submission\n\n### API\n\n```\nProps:\n  steps: array of { name, fields, validate() }\n  onSubmit: async callback with all form data\n  onStepChange: callback with current step index\n  initialData: optional prefill data\n```\n\n### Responsive Behavior\n- Desktop: horizontal stepper with labels\n- Tablet: horizontal stepper with numbers only\n- Mobile: vertical stepper sidebar or progress bar"
+  },
+  {
+    "slug": "crud-api",
+    "title": "REST API with CRUD Endpoints",
+    "category": "full-stack-flow",
+    "tags": [
+      "api",
+      "rest",
+      "crud",
+      "backend",
+      "database"
+    ],
+    "preview": null,
+    "description": "Complete prompt for building a REST API with CRUD operations, validation, error handling, and database integration.",
+    "placeholders": [
+      {
+        "key": "resource_name",
+        "label": "Resource Name (singular)",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "resource_fields",
+        "label": "Resource Fields (e.g. name, email, age)",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "framework",
+        "label": "Backend Framework",
+        "type": "select",
+        "options": [
+          "Express + TypeScript",
+          "FastAPI",
+          "Axum",
+          "Django REST",
+          "Rails",
+          "Go + Chi"
+        ]
+      },
+      {
+        "key": "database",
+        "label": "Database",
+        "type": "select",
+        "options": [
+          "PostgreSQL",
+          "MySQL",
+          "SQLite",
+          "MongoDB"
+        ]
+      },
+      {
+        "key": "auth_required",
+        "label": "Require Authentication",
+        "type": "boolean",
+        "options": null
+      }
+    ],
+    "body": "# REST API: {{resource_name}} CRUD\n\n## Overview\n\nBuild a complete REST API for managing {{resource_name}} resources using {{framework}} with {{database}}.\n\nAuthentication required: {{auth_required}}\n\n## Endpoints\n\n| Method | Path | Description |\n|--------|------|-------------|\n| GET | /api/{{resource_name}}s | List all (with pagination) |\n| GET | /api/{{resource_name}}s/:id | Get one by ID |\n| POST | /api/{{resource_name}}s | Create new |\n| PUT | /api/{{resource_name}}s/:id | Update existing |\n| DELETE | /api/{{resource_name}}s/:id | Delete |\n\n## Data Model\n\nFields: {{resource_fields}}\n\nEvery record also has:\n- `id` — primary key (UUID or auto-increment)\n- `created_at` — timestamp, set on creation\n- `updated_at` — timestamp, updated on every write\n\n## Validation\n\n- All required fields must be present on POST\n- Partial updates allowed on PUT\n- Return 400 with field-level error messages for invalid input\n\n## Error Handling\n\n- 400 — validation errors (return field-level details)\n- 404 — resource not found\n- 409 — conflict (duplicate unique fields)\n- 500 — internal server error (log details, return generic message)\n\n## Pagination\n\nGET list endpoint supports:\n- `?page=1&per_page=20` — offset-based pagination\n- Response includes: `total`, `page`, `per_page`, `data[]`\n\n## Testing\n\n- Unit tests for validation logic\n- Integration tests for each endpoint\n- Test error cases (404, 400, duplicate)"
   }
 ]

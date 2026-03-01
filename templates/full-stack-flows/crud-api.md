@@ -1,0 +1,76 @@
+---
+title: "REST API with CRUD Endpoints"
+category: full-stack-flow
+tags: [api, rest, crud, backend, database]
+description: "Complete prompt for building a REST API with CRUD operations, validation, error handling, and database integration."
+placeholders:
+  - key: resource_name
+    label: "Resource Name (singular)"
+    type: text
+  - key: resource_fields
+    label: "Resource Fields (e.g. name, email, age)"
+    type: text
+  - key: framework
+    label: "Backend Framework"
+    type: select
+    options: [Express + TypeScript, FastAPI, Axum, Django REST, Rails, Go + Chi]
+  - key: database
+    label: "Database"
+    type: select
+    options: [PostgreSQL, MySQL, SQLite, MongoDB]
+  - key: auth_required
+    label: "Require Authentication"
+    type: boolean
+---
+
+# REST API: {{resource_name}} CRUD
+
+## Overview
+
+Build a complete REST API for managing {{resource_name}} resources using {{framework}} with {{database}}.
+
+Authentication required: {{auth_required}}
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /api/{{resource_name}}s | List all (with pagination) |
+| GET | /api/{{resource_name}}s/:id | Get one by ID |
+| POST | /api/{{resource_name}}s | Create new |
+| PUT | /api/{{resource_name}}s/:id | Update existing |
+| DELETE | /api/{{resource_name}}s/:id | Delete |
+
+## Data Model
+
+Fields: {{resource_fields}}
+
+Every record also has:
+- `id` — primary key (UUID or auto-increment)
+- `created_at` — timestamp, set on creation
+- `updated_at` — timestamp, updated on every write
+
+## Validation
+
+- All required fields must be present on POST
+- Partial updates allowed on PUT
+- Return 400 with field-level error messages for invalid input
+
+## Error Handling
+
+- 400 — validation errors (return field-level details)
+- 404 — resource not found
+- 409 — conflict (duplicate unique fields)
+- 500 — internal server error (log details, return generic message)
+
+## Pagination
+
+GET list endpoint supports:
+- `?page=1&per_page=20` — offset-based pagination
+- Response includes: `total`, `page`, `per_page`, `data[]`
+
+## Testing
+
+- Unit tests for validation logic
+- Integration tests for each endpoint
+- Test error cases (404, 400, duplicate)

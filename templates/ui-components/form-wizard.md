@@ -1,0 +1,70 @@
+---
+title: "Multi-Step Form Wizard"
+category: ui-component
+tags: [form, wizard, stepper, ui, component]
+description: "Prompt for building a multi-step form with validation, progress indicator, and state management."
+placeholders:
+  - key: framework
+    label: "UI Framework"
+    type: select
+    options: [React, Vue, Svelte, Solid]
+  - key: num_steps
+    label: "Number of Steps"
+    type: select
+    options: ["3", "4", "5"]
+  - key: step_names
+    label: "Step Names (comma-separated, e.g. Account, Profile, Preferences)"
+    type: text
+  - key: styling
+    label: "Styling Approach"
+    type: select
+    options: [Tailwind CSS, CSS Modules, Styled Components, Plain CSS]
+---
+
+# Multi-Step Form Wizard
+
+## Prompt
+
+Build a {{num_steps}}-step form wizard in {{framework}} with {{styling}}.
+
+### Steps
+
+The form has these steps: {{step_names}}
+
+### Progress Indicator
+- Horizontal stepper bar at the top
+- Shows: step number, step name, completion status
+- States: completed (checkmark), current (highlighted), upcoming (dimmed)
+- Clickable to navigate back to completed steps (not forward)
+
+### Navigation
+- "Next" button advances to next step (validates current step first)
+- "Back" button returns to previous step (preserves input)
+- "Submit" button on final step
+- Keyboard: Enter advances, Escape goes back
+
+### Validation
+- Per-step validation on "Next" click
+- Inline error messages below each invalid field
+- Highlight invalid fields with red border
+- Don't allow advancing until current step is valid
+
+### State Management
+- Preserve all input when navigating between steps
+- Form state survives page refresh (localStorage)
+- Clear state on successful submission
+
+### API
+
+```
+Props:
+  steps: array of { name, fields, validate() }
+  onSubmit: async callback with all form data
+  onStepChange: callback with current step index
+  initialData: optional prefill data
+```
+
+### Responsive Behavior
+- Desktop: horizontal stepper with labels
+- Tablet: horizontal stepper with numbers only
+- Mobile: vertical stepper sidebar or progress bar

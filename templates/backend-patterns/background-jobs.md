@@ -1,0 +1,73 @@
+---
+title: "Background Job Processing"
+category: backend-pattern
+tags: [jobs, queue, async, workers, backend]
+description: "Prompt for implementing a background job processing system with queues, retries, and monitoring."
+placeholders:
+  - key: job_types
+    label: "Job Types (comma-separated, e.g. email, pdf-generation, data-sync)"
+    type: text
+  - key: framework
+    label: "Backend Framework"
+    type: select
+    options: [Node.js + BullMQ, Python + Celery, Ruby + Sidekiq, Go + Asynq]
+  - key: priority_levels
+    label: "Number of Priority Levels"
+    type: select
+    options: ["2 (high/low)", "3 (high/medium/low)", "1 (no priority)"]
+  - key: retry_strategy
+    label: "Retry Strategy"
+    type: select
+    options: [Exponential backoff, Fixed interval, No retries]
+---
+
+# Background Job Processing
+
+## Overview
+
+Implement a background job processing system using {{framework}} to handle these job types: {{job_types}}.
+
+## Architecture
+
+### Queue Setup
+- Separate queues per job type for isolation
+- Priority levels: {{priority_levels}}
+- Dead letter queue for permanently failed jobs
+
+### Workers
+- One worker process per queue (can scale horizontally)
+- Concurrency: 5 jobs per worker (configurable)
+- Graceful shutdown on SIGTERM
+
+### Job Lifecycle
+1. **Enqueued** — job created with payload, placed in queue
+2. **Active** — worker picks up the job
+3. **Completed** — success, job removed from queue
+4. **Failed** — error occurred, retry scheduled
+5. **Dead** — max retries exhausted, moved to dead letter queue
+
+## Retry Strategy
+
+Strategy: {{retry_strategy}}
+
+- Max retries: 3
+- Backoff: 30s, 2min, 10min (exponential) or 60s fixed
+- Failures logged with full error + stack trace
+
+## Job Interface
+
+Each job handler receives:
+- `payload` — serialized JSON data
+- `attempt` — current attempt number (1-based)
+- `job_id` — unique identifier for tracking
+
+Each job handler must:
+- Be idempotent (safe to retry)
+- Complete within a timeout (default: 5 minutes)
+- Throw on failure (triggers retry)
+
+## Monitoring
+
+- Dashboard showing: active, waiting, completed, failed counts
+- Alerts when dead letter queue has items
+- Per-job execution time tracking

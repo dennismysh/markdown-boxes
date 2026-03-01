@@ -41,7 +41,7 @@ mod tests {
     #[test]
     fn load_embedded_templates() {
         let templates = load_templates();
-        assert_eq!(templates.len(), 3);
+        assert!(templates.len() >= 3);
     }
 
     #[test]
@@ -62,8 +62,8 @@ mod tests {
     fn filter_by_category() {
         let templates = load_templates();
         let results = super::filter_by_category(&templates, &Category::ImplementationPlan);
-        assert_eq!(results.len(), 1);
-        assert_eq!(results[0].slug, "auth-flow");
+        assert!(results.len() >= 1);
+        assert!(results.iter().any(|t| t.slug == "auth-flow"));
     }
 
     #[test]
