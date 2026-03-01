@@ -8,6 +8,7 @@ use leptos::prelude::*;
 use leptos_router::components::{Route, Router, Routes};
 use leptos_router::path;
 use pages::gallery::Gallery;
+use pages::template_view::TemplateView;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -20,6 +21,7 @@ pub fn App() -> impl IntoView {
                 <main>
                     <Routes fallback=|| view! { <p class="not-found">"Not found"</p> }>
                         <Route path=path!("/") view=Gallery/>
+                        <Route path=path!("/template/:slug") view=TemplateView/>
                     </Routes>
                 </main>
             </div>
