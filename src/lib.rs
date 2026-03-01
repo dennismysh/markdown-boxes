@@ -1,5 +1,6 @@
 pub mod models;
 pub mod store;
+pub mod substitute;
 
 use leptos::prelude::*;
 use leptos_router::components::{Route, Router, Routes};
