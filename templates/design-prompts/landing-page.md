@@ -1,0 +1,62 @@
+---
+title: "Landing Page Design"
+category: design-prompt
+tags: [design, landing-page, ui, marketing]
+description: "AI prompt for designing a modern landing page with hero, features, and CTA sections."
+placeholders:
+  - key: product_name
+    label: "Product Name"
+    type: text
+  - key: tagline
+    label: "Tagline"
+    type: text
+  - key: product_description
+    label: "Product Description"
+    type: multiline
+  - key: color_scheme
+    label: "Color Scheme"
+    type: select
+    options: [Dark minimal, Light clean, Vibrant gradient, Corporate blue]
+  - key: num_features
+    label: "Number of Features to Highlight"
+    type: select
+    options: ["3", "4", "6"]
+---
+
+# Design Prompt: {{product_name}} Landing Page
+
+## Context
+
+Design a modern landing page for **{{product_name}}**.
+
+Tagline: "{{tagline}}"
+
+Product description: {{product_description}}
+
+## Design Requirements
+
+**Color scheme:** {{color_scheme}}
+
+### Hero Section
+- Large headline with the tagline
+- Brief subtitle expanding on the value proposition
+- Primary CTA button ("Get Started" or similar)
+- Hero image or illustration on the right
+
+### Features Section
+- {{num_features}} feature cards in a grid
+- Each card: icon, title, 1-2 sentence description
+- Clean spacing, consistent alignment
+
+### Social Proof
+- Testimonial quotes or company logos
+- Usage statistics if available
+
+### Footer CTA
+- Repeated call to action
+- Secondary link to documentation or pricing
+
+## Technical Constraints
+- Responsive: mobile-first, works at 320px-1440px+
+- Performance: no layout shift, lazy-load images
+- Accessibility: WCAG 2.1 AA compliant

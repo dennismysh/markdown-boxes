@@ -1,1 +1,158 @@
-[]
+[
+  {
+    "slug": "auth-flow",
+    "title": "Authentication Flow",
+    "category": "implementation-plan",
+    "tags": [
+      "auth",
+      "jwt",
+      "backend",
+      "security"
+    ],
+    "preview": null,
+    "description": "Step-by-step plan for building JWT-based authentication with login, registration, and token refresh.",
+    "placeholders": [
+      {
+        "key": "project_name",
+        "label": "Project Name",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "auth_provider",
+        "label": "Auth Provider",
+        "type": "select",
+        "options": [
+          "Firebase",
+          "Supabase",
+          "Custom JWT",
+          "Auth0"
+        ]
+      },
+      {
+        "key": "framework",
+        "label": "Backend Framework",
+        "type": "select",
+        "options": [
+          "Express",
+          "FastAPI",
+          "Axum",
+          "Django",
+          "Rails"
+        ]
+      },
+      {
+        "key": "additional_requirements",
+        "label": "Additional Requirements",
+        "type": "multiline",
+        "options": null
+      }
+    ],
+    "body": "# {{project_name}} — Authentication Flow\n\n## Overview\n\nBuild a JWT-based auth system for {{project_name}} using {{auth_provider}} with {{framework}}.\n\n## Step 1: User Registration\n\nCreate the registration endpoint that accepts email and password:\n- Hash passwords with bcrypt (cost factor 12)\n- Validate email format and password strength\n- Store user in database\n- Return JWT access token + refresh token\n\n## Step 2: Login Flow\n\nImplement the login endpoint:\n- Verify credentials against stored hash\n- Generate short-lived access token (15 min)\n- Generate long-lived refresh token (7 days)\n- Set refresh token as httpOnly cookie\n\n## Step 3: Token Refresh\n\nCreate the refresh endpoint:\n- Validate refresh token from cookie\n- Issue new access + refresh token pair\n- Rotate refresh tokens (invalidate old one)\n\n## Step 4: Protected Routes\n\nAdd auth middleware:\n- Extract JWT from Authorization header\n- Verify signature and expiration\n- Attach user context to request\n- Return 401 for invalid/expired tokens\n\n## Step 5: Logout\n\nImplement logout:\n- Invalidate refresh token server-side\n- Clear httpOnly cookie\n- Client clears stored access token\n\n## Additional Notes\n\n{{additional_requirements}}"
+  },
+  {
+    "slug": "data-table",
+    "title": "Data Table Component",
+    "category": "ui-component",
+    "tags": [
+      "table",
+      "data",
+      "component",
+      "ui"
+    ],
+    "preview": null,
+    "description": "Prompt for building a sortable, filterable data table component with pagination.",
+    "placeholders": [
+      {
+        "key": "framework",
+        "label": "UI Framework",
+        "type": "select",
+        "options": [
+          "React",
+          "Vue",
+          "Svelte",
+          "Solid"
+        ]
+      },
+      {
+        "key": "styling",
+        "label": "Styling Approach",
+        "type": "select",
+        "options": [
+          "Tailwind CSS",
+          "CSS Modules",
+          "Styled Components",
+          "Plain CSS"
+        ]
+      },
+      {
+        "key": "columns",
+        "label": "Column Definitions (comma-separated)",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "has_pagination",
+        "label": "Include Pagination",
+        "type": "boolean",
+        "options": null
+      }
+    ],
+    "body": "# Data Table Component\n\n## Prompt\n\nBuild a reusable data table component in {{framework}} with {{styling}}.\n\n### Columns\n\nThe table should display these columns: {{columns}}\n\n### Features\n\n- **Sorting:** Click column headers to sort ascending/descending\n- **Filtering:** Text input above the table for global search across all columns\n- **Selection:** Checkbox column for row selection with select-all header\n- **Pagination:** {{has_pagination}}\n- **Empty state:** Show a centered message when no data matches filters\n\n### API\n\n```\nProps:\n  data: array of row objects\n  columns: array of { key, label, sortable? }\n  onSelectionChange: callback with selected row IDs\n  pageSize: number (default 20)\n```\n\n### Responsive Behavior\n\n- Desktop: full table with all columns\n- Tablet: horizontally scrollable\n- Mobile: card layout, one card per row"
+  },
+  {
+    "slug": "landing-page",
+    "title": "Landing Page Design",
+    "category": "design-prompt",
+    "tags": [
+      "design",
+      "landing-page",
+      "ui",
+      "marketing"
+    ],
+    "preview": null,
+    "description": "AI prompt for designing a modern landing page with hero, features, and CTA sections.",
+    "placeholders": [
+      {
+        "key": "product_name",
+        "label": "Product Name",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "tagline",
+        "label": "Tagline",
+        "type": "text",
+        "options": null
+      },
+      {
+        "key": "product_description",
+        "label": "Product Description",
+        "type": "multiline",
+        "options": null
+      },
+      {
+        "key": "color_scheme",
+        "label": "Color Scheme",
+        "type": "select",
+        "options": [
+          "Dark minimal",
+          "Light clean",
+          "Vibrant gradient",
+          "Corporate blue"
+        ]
+      },
+      {
+        "key": "num_features",
+        "label": "Number of Features to Highlight",
+        "type": "select",
+        "options": [
+          "3",
+          "4",
+          "6"
+        ]
+      }
+    ],
+    "body": "# Design Prompt: {{product_name}} Landing Page\n\n## Context\n\nDesign a modern landing page for **{{product_name}}**.\n\nTagline: \"{{tagline}}\"\n\nProduct description: {{product_description}}\n\n## Design Requirements\n\n**Color scheme:** {{color_scheme}}\n\n### Hero Section\n- Large headline with the tagline\n- Brief subtitle expanding on the value proposition\n- Primary CTA button (\"Get Started\" or similar)\n- Hero image or illustration on the right\n\n### Features Section\n- {{num_features}} feature cards in a grid\n- Each card: icon, title, 1-2 sentence description\n- Clean spacing, consistent alignment\n\n### Social Proof\n- Testimonial quotes or company logos\n- Usage statistics if available\n\n### Footer CTA\n- Repeated call to action\n- Secondary link to documentation or pricing\n\n## Technical Constraints\n- Responsive: mobile-first, works at 320px-1440px+\n- Performance: no layout shift, lazy-load images\n- Accessibility: WCAG 2.1 AA compliant"
+  }
+]
