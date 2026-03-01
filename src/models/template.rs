@@ -38,8 +38,6 @@ impl Category {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::placeholder::PlaceholderType;
-
     #[test]
     fn deserialize_template_from_json() {
         let json = r##"{
