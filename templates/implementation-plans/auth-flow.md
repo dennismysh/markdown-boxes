@@ -2,6 +2,7 @@
 title: "Authentication Flow"
 category: implementation-plan
 tags: [auth, jwt, backend, security]
+preview: auth-flow-hero.svg
 description: "Step-by-step plan for building JWT-based authentication with login, registration, and token refresh."
 placeholders:
   - key: project_name
