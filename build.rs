@@ -97,4 +97,14 @@ fn main() {
     let out_dir = Path::new("generated");
     fs::create_dir_all(out_dir).expect("create generated/");
     fs::write(out_dir.join("templates.json"), json).expect("write templates.json");
+
+    // Collect hero SVGs into public/previews/ for Trunk to copy into dist
+    let previews_dir = Path::new("public/previews");
+    fs::create_dir_all(previews_dir).expect("create public/previews/");
+    for entry in glob::glob("templates/**/*-hero.svg").expect("glob pattern") {
+        if let Ok(path) = entry {
+            let filename = path.file_name().unwrap();
+            fs::copy(&path, previews_dir.join(filename)).expect("copy hero SVG");
+        }
+    }
 }
