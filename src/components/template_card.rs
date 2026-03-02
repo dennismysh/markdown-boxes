@@ -9,7 +9,7 @@ pub fn TemplateCard(template: Template) -> impl IntoView {
     let description = template.description.clone();
     let tags = template.tags.clone();
     let has_preview = template.preview.is_some();
-    let preview_src = template.preview.map(|p| format!("/previews/{p}"));
+    let preview_src = template.preview.map(|p| format!("{}/previews/{p}", crate::BASE_PATH));
 
     view! {
         <a href=href class="template-card">
