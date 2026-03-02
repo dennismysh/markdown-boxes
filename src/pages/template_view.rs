@@ -26,6 +26,7 @@ pub fn TemplateView() -> impl IntoView {
                 let title = tmpl.title.clone();
                 let body = tmpl.body.clone();
                 let placeholders = tmpl.placeholders.clone();
+                let preview_src = tmpl.preview.map(|p| format!("{}/previews/{p}", crate::BASE_PATH));
 
                 let field_signals: Vec<(Placeholder, ReadSignal<String>, WriteSignal<String>)> =
                     placeholders.into_iter().map(|p| {
@@ -64,6 +65,11 @@ pub fn TemplateView() -> impl IntoView {
                             </div>
                             <div class="template-preview-pane">
                                 <h3>"Preview"</h3>
+                                {preview_src.map(|src| view! {
+                                    <div class="hero-diagram">
+                                        <img src=src alt="Template diagram" />
+                                    </div>
+                                })}
                                 <MarkdownPreview content=preview_content />
                             </div>
                         </div>
