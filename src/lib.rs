@@ -11,17 +11,19 @@ use pages::gallery::Gallery;
 use pages::template_view::TemplateView;
 
 #[cfg(debug_assertions)]
-const BASE_PATH: &str = "";
+pub const BASE_PATH: &str = "";
 #[cfg(not(debug_assertions))]
-const BASE_PATH: &str = "/markdown-boxes";
+pub const BASE_PATH: &str = "/markdown-boxes";
 
 #[component]
 pub fn App() -> impl IntoView {
+    let home_href = format!("{}/", BASE_PATH);
+
     view! {
         <Router base=BASE_PATH>
             <div class="app">
                 <header>
-                    <a href="/" class="logo">"Markdown Boxes"</a>
+                    <a href=home_href class="logo">"Markdown Boxes"</a>
                 </header>
                 <main>
                     <Routes fallback=|| view! { <p class="not-found">"Not found"</p> }>

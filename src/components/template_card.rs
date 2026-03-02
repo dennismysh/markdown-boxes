@@ -3,7 +3,7 @@ use crate::models::template::Template;
 
 #[component]
 pub fn TemplateCard(template: Template) -> impl IntoView {
-    let href = format!("/template/{}", template.slug);
+    let href = format!("{}/template/{}", crate::BASE_PATH, template.slug);
     let category_label = template.category.label().to_string();
     let title = template.title.clone();
     let description = template.description.clone();

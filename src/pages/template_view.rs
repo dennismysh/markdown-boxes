@@ -17,8 +17,11 @@ pub fn TemplateView() -> impl IntoView {
 
     let template = move || store::get_template(&all_templates, &slug());
 
+    let back_href = format!("{}/", crate::BASE_PATH);
+
     view! {
         {move || {
+            let back = back_href.clone();
             if let Some(tmpl) = template() {
                 let title = tmpl.title.clone();
                 let body = tmpl.body.clone();
@@ -46,7 +49,7 @@ pub fn TemplateView() -> impl IntoView {
                 view! {
                     <div class="template-view">
                         <div class="template-header">
-                            <a href="/" class="back-link">"← Back to gallery"</a>
+                            <a href=back class="back-link">"← Back to gallery"</a>
                             <h2>{title}</h2>
                         </div>
                         <div class="template-layout">
@@ -70,7 +73,7 @@ pub fn TemplateView() -> impl IntoView {
                 view! {
                     <div class="not-found">
                         <h2>"Template not found"</h2>
-                        <a href="/">"← Back to gallery"</a>
+                        <a href=back>"← Back to gallery"</a>
                     </div>
                 }.into_any()
             }
