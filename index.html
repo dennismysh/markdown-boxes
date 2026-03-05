@@ -208,9 +208,17 @@
       .category-filter { overflow-x: auto; flex-wrap: nowrap; }
     }
 
-    /* Mobile portrait: inline scrollable options instead of anchored dropdown */
-    @media (max-width: 768px) and (orientation: portrait) {
-      .form-field .select-desktop { display: none; }
+    /* Mobile: inline scrollable options instead of anchored dropdown */
+    @media (max-width: 768px) {
+      .form-field .select-desktop {
+        display: none;
+        visibility: hidden;
+        pointer-events: none;
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
       .select-mobile {
         display: flex;
         flex-direction: column;
@@ -240,6 +248,7 @@
         color: white;
       }
     }
+
   </style>
 </head>
 <body></body>
