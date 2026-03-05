@@ -14,17 +14,27 @@ placeholders:
   - key: project_name
     label: "Project Name"
     type: text
+    filters:
+      - required
+      - max_length: 50
+      - default: "My App"
   - key: auth_provider
     label: "Auth Provider"
     type: select
-    options: [Firebase, Supabase, Custom JWT, Auth0]
+    filters:
+      - required
+      - options: [Firebase, Supabase, Custom JWT, Auth0]
   - key: framework
     label: "Backend Framework"
     type: select
-    options: [Express, FastAPI, Axum, Django, Rails]
+    filters:
+      - required
+      - options: [Express, FastAPI, Axum, Django, Rails]
   - key: additional_requirements
     label: "Additional Requirements"
     type: multiline
+    filters:
+      - max_length: 500
 ---
 
 # {{project_name}} — Authentication Flow
