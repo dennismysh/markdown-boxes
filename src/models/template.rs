@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use super::placeholder::Placeholder;
+use super::section::Section;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Template {
@@ -18,6 +19,8 @@ pub struct Template {
     #[serde(default)]
     pub outputs: Vec<OutputTarget>,
     pub placeholders: Vec<Placeholder>,
+    #[serde(default)]
+    pub sections: Vec<Section>,
     pub body: String,
 }
 

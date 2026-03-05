@@ -18,7 +18,16 @@ struct TemplateData {
     description: String,
     outputs: Vec<OutputData>,
     placeholders: Vec<PlaceholderData>,
+    sections: Vec<SectionData>,
     body: String,
+}
+
+#[derive(Debug, Serialize)]
+struct SectionData {
+    name: String,
+    section_type: String,
+    properties: std::collections::HashMap<String, String>,
+    content: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -111,6 +120,55 @@ fn convert_filters(inputs: &[FilterInput]) -> Vec<serde_json::Value> {
         .collect()
 }
 
+fn parse_sections(body: &str) -> Vec<SectionData> {
+    let mut sections = Vec::new();
+    let lines: Vec<&str> = body.lines().collect();
+    let mut i = 0;
+
+    while i < lines.len() {
+        if lines[i].starts_with("## Section:") {
+            let name = lines[i].trim_start_matches("## Section:").trim().to_string();
+            let mut properties = std::collections::HashMap::new();
+            let mut section_type = "component".to_string();
+            i += 1;
+
+            // Parse dash-prefixed property lines
+            while i < lines.len() && lines[i].starts_with("- ") {
+                let prop_line = lines[i].trim_start_matches("- ");
+                if let Some((key, val)) = prop_line.split_once(':') {
+                    let key = key.trim().to_string();
+                    let val = val.trim().to_string();
+                    if key == "type" {
+                        section_type = val;
+                    } else {
+                        properties.insert(key, val);
+                    }
+                }
+                i += 1;
+            }
+
+            // Collect content until next ## or end
+            let mut content = String::new();
+            while i < lines.len() && !lines[i].starts_with("## ") {
+                content.push_str(lines[i]);
+                content.push('\n');
+                i += 1;
+            }
+
+            sections.push(SectionData {
+                name,
+                section_type,
+                properties,
+                content: content.trim().to_string(),
+            });
+        } else {
+            i += 1;
+        }
+    }
+
+    sections
+}
+
 fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
     let content = content.trim();
     if !content.starts_with("---") {
@@ -131,6 +189,8 @@ fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
         }
     };
 
+    let sections = parse_sections(&body);
+
     Some(TemplateData {
         slug: slug.to_string(),
         title: frontmatter.title,
@@ -143,6 +203,7 @@ fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
         description: frontmatter.description,
         outputs: frontmatter.outputs,
         placeholders: frontmatter.placeholders.into_iter().map(convert_placeholder).collect(),
+        sections,
         body,
     })
 }
