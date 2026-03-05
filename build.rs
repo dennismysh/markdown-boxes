@@ -19,7 +19,18 @@ struct TemplateData {
     outputs: Vec<OutputData>,
     placeholders: Vec<PlaceholderData>,
     sections: Vec<SectionData>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    style_spec: Option<StyleSpecData>,
     body: String,
+}
+
+#[derive(Debug, Serialize)]
+struct StyleSpecData {
+    name: String,
+    approach: Option<String>,
+    colors: std::collections::HashMap<String, String>,
+    typography: std::collections::HashMap<String, String>,
+    effects: std::collections::HashMap<String, String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -169,6 +180,63 @@ fn parse_sections(body: &str) -> Vec<SectionData> {
     sections
 }
 
+fn parse_style_spec(body: &str) -> Option<StyleSpecData> {
+    let lines: Vec<&str> = body.lines().collect();
+    let mut i = 0;
+    while i < lines.len() {
+        if lines[i].starts_with("## Styling:") {
+            let name = lines[i].trim_start_matches("## Styling:").trim().to_string();
+            let mut approach = None;
+            let mut colors = std::collections::HashMap::new();
+            let mut typography = std::collections::HashMap::new();
+            let mut effects = std::collections::HashMap::new();
+            i += 1;
+
+            // Parse top-level properties
+            while i < lines.len() && lines[i].starts_with("- ") {
+                let prop = lines[i].trim_start_matches("- ");
+                if let Some((k, v)) = prop.split_once(':') {
+                    if k.trim() == "approach" {
+                        approach = Some(v.trim().to_string());
+                    }
+                }
+                i += 1;
+            }
+
+            // Parse subsections
+            let mut current_map: Option<&mut std::collections::HashMap<String, String>> = None;
+            while i < lines.len() && !lines[i].starts_with("## ") {
+                let line = lines[i];
+                if line.starts_with("### Colors") {
+                    current_map = Some(&mut colors);
+                } else if line.starts_with("### Typography") {
+                    current_map = Some(&mut typography);
+                } else if line.starts_with("### Effects") {
+                    current_map = Some(&mut effects);
+                } else if line.starts_with("- ") {
+                    if let Some(ref mut map) = current_map {
+                        let prop = line.trim_start_matches("- ");
+                        if let Some((k, v)) = prop.split_once(':') {
+                            map.insert(k.trim().to_string(), v.trim().to_string());
+                        }
+                    }
+                }
+                i += 1;
+            }
+
+            return Some(StyleSpecData {
+                name,
+                approach,
+                colors,
+                typography,
+                effects,
+            });
+        }
+        i += 1;
+    }
+    None
+}
+
 fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
     let content = content.trim();
     if !content.starts_with("---") {
@@ -190,6 +258,7 @@ fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
     };
 
     let sections = parse_sections(&body);
+    let style_spec = parse_style_spec(&body);
 
     Some(TemplateData {
         slug: slug.to_string(),
@@ -204,6 +273,7 @@ fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
         outputs: frontmatter.outputs,
         placeholders: frontmatter.placeholders.into_iter().map(convert_placeholder).collect(),
         sections,
+        style_spec,
         body,
     })
 }
