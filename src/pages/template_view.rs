@@ -173,7 +173,7 @@ fn ExportButtons(content: Signal<String>) -> impl IntoView {
         let document = web_sys::window().unwrap().document().unwrap();
         let a: web_sys::HtmlAnchorElement = document.create_element("a").unwrap().unchecked_into();
         a.set_href(&url);
-        a.set_download("template.md");
+        a.set_download("template.mdal");
         a.click();
         web_sys::Url::revoke_object_url(&url).unwrap();
     };
@@ -183,7 +183,7 @@ fn ExportButtons(content: Signal<String>) -> impl IntoView {
             {move || if copied.get() { "Copied!" } else { "Copy to Clipboard" }}
         </button>
         <button class="btn btn-secondary" on:click=download>
-            "Download .md"
+            "Download .mdal"
         </button>
     }
 }
