@@ -31,6 +31,7 @@ pub fn TemplateView() -> impl IntoView {
                 let tmpl_sections = tmpl.sections.clone();
                 let style_spec = tmpl.style_spec.clone();
                 let preview_src = tmpl.preview.map(|p| format!("{}/previews/{p}", crate::BASE_PATH));
+                let (preview_mode, set_preview_mode) = signal("rendered".to_string());
 
                 let field_signals: Vec<(Placeholder, ReadSignal<String>, WriteSignal<String>)> =
                     placeholders.into_iter().map(|p| {
@@ -100,13 +101,36 @@ pub fn TemplateView() -> impl IntoView {
                                 }
                                 css
                             }).unwrap_or_default()>
-                                <h3>"Preview"</h3>
+                                <div class="preview-header">
+                                    <h3>"Preview"</h3>
+                                    <div class="preview-toggle">
+                                        <button
+                                            class=move || if preview_mode.get() == "rendered" { "toggle-btn active" } else { "toggle-btn" }
+                                            on:click=move |_| set_preview_mode.set("rendered".to_string())
+                                        >
+                                            "Rendered"
+                                        </button>
+                                        <button
+                                            class=move || if preview_mode.get() == "source" { "toggle-btn active" } else { "toggle-btn" }
+                                            on:click=move |_| set_preview_mode.set("source".to_string())
+                                        >
+                                            "Source"
+                                        </button>
+                                    </div>
+                                </div>
                                 {preview_src.map(|src| view! {
                                     <div class="hero-diagram">
                                         <img src=src alt="Template diagram" />
                                     </div>
                                 })}
-                                <MarkdownPreview content=preview_content />
+                                {move || {
+                                    if preview_mode.get() == "rendered" {
+                                        view! { <MarkdownPreview content=preview_content /> }.into_any()
+                                    } else {
+                                        let source = preview_content.get();
+                                        view! { <pre class="mdal-source"><code>{source}</code></pre> }.into_any()
+                                    }
+                                }}
                             </div>
                         </div>
                     </div>
