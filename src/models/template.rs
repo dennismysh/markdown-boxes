@@ -5,12 +5,26 @@ use super::placeholder::Placeholder;
 pub struct Template {
     pub slug: String,
     pub title: String,
+    #[serde(default)]
+    pub mdal_type: Option<String>,
+    #[serde(default)]
+    pub version: Option<String>,
+    #[serde(default)]
+    pub author: Option<String>,
     pub category: Category,
     pub tags: Vec<String>,
     pub preview: Option<String>,
     pub description: String,
+    #[serde(default)]
+    pub outputs: Vec<OutputTarget>,
     pub placeholders: Vec<Placeholder>,
     pub body: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct OutputTarget {
+    pub format: String,
+    pub target: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -63,6 +77,29 @@ mod tests {
         assert_eq!(template.category, Category::FullStackFlow);
         assert_eq!(template.placeholders.len(), 1);
         assert_eq!(template.placeholders[0].key, "project_name");
+    }
+
+    #[test]
+    fn deserialize_mdal_frontmatter_fields() {
+        let json = r##"{
+            "slug": "test",
+            "title": "Test",
+            "mdal_type": "application",
+            "version": "1.0.0",
+            "author": "@system/templates",
+            "category": "design-prompt",
+            "tags": [],
+            "preview": null,
+            "description": "Test template",
+            "outputs": [{"format": "html", "target": "web"}],
+            "placeholders": [],
+            "body": "# Test"
+        }"##;
+        let t: Template = serde_json::from_str(json).unwrap();
+        assert_eq!(t.mdal_type.unwrap(), "application");
+        assert_eq!(t.version.unwrap(), "1.0.0");
+        assert_eq!(t.author.unwrap(), "@system/templates");
+        assert_eq!(t.outputs.len(), 1);
     }
 
     #[test]

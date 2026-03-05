@@ -6,12 +6,25 @@ use std::path::Path;
 struct TemplateData {
     slug: String,
     title: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    mdal_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    version: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    author: Option<String>,
     category: String,
     tags: Vec<String>,
     preview: Option<String>,
     description: String,
+    outputs: Vec<OutputData>,
     placeholders: Vec<PlaceholderData>,
     body: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct OutputData {
+    format: String,
+    target: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -27,11 +40,19 @@ struct PlaceholderData {
 #[derive(Debug, Deserialize)]
 struct Frontmatter {
     title: String,
+    #[serde(default, rename = "type")]
+    mdal_type: Option<String>,
+    #[serde(default)]
+    version: Option<String>,
+    #[serde(default)]
+    author: Option<String>,
     category: String,
     tags: Vec<String>,
     #[serde(default)]
     preview: Option<String>,
     description: String,
+    #[serde(default)]
+    outputs: Vec<OutputData>,
     #[serde(default)]
     placeholders: Vec<PlaceholderData>,
 }
@@ -59,10 +80,14 @@ fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
     Some(TemplateData {
         slug: slug.to_string(),
         title: frontmatter.title,
+        mdal_type: frontmatter.mdal_type,
+        version: frontmatter.version,
+        author: frontmatter.author,
         category: frontmatter.category,
         tags: frontmatter.tags,
         preview: frontmatter.preview,
         description: frontmatter.description,
+        outputs: frontmatter.outputs,
         placeholders: frontmatter.placeholders,
         body,
     })
