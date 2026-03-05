@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use super::filter::Filter;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Placeholder {
@@ -7,6 +8,8 @@ pub struct Placeholder {
     #[serde(rename = "type")]
     pub kind: PlaceholderType,
     pub options: Option<Vec<String>>,
+    #[serde(default)]
+    pub filters: Vec<Filter>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -28,6 +31,13 @@ mod tests {
         let p: Placeholder = serde_json::from_str(json).unwrap();
         assert_eq!(p.kind, PlaceholderType::Text);
         assert!(p.options.is_none());
+    }
+
+    #[test]
+    fn deserialize_placeholder_with_filters() {
+        let json = r#"{"key":"name","label":"Name","type":"text","options":null,"filters":[{"required":null},{"max_length":100}]}"#;
+        let p: Placeholder = serde_json::from_str(json).unwrap();
+        assert_eq!(p.filters.len(), 2);
     }
 
     #[test]
