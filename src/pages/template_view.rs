@@ -6,6 +6,7 @@ use crate::components::form_field::FormField;
 use crate::components::markdown_preview::MarkdownPreview;
 use crate::models::filter::Filter;
 use crate::models::placeholder::Placeholder;
+use crate::engine::evaluate_blocks;
 use crate::store;
 use crate::substitute::substitute;
 
@@ -50,7 +51,8 @@ pub fn TemplateView() -> impl IntoView {
                             values.insert(p.key.clone(), val);
                         }
                     }
-                    substitute(&body, &values)
+                    let after_blocks = evaluate_blocks(&body, &values);
+                    substitute(&after_blocks, &values)
                 });
 
                 view! {
