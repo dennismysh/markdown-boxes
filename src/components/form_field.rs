@@ -72,10 +72,13 @@ pub fn FormField(
                 _ => None,
             });
             let options = filter_options.or(placeholder.options).unwrap_or_default();
+            let mobile_options = options.clone();
             let k = key.clone();
+            let k2 = k.clone();
             view! {
                 <select
                     id=k
+                    class="select-desktop"
                     on:change=move |ev| on_change.set(event_target_value(&ev))
                 >
                     <option value="" disabled selected>"Select..."</option>
@@ -86,6 +89,24 @@ pub fn FormField(
                         }
                     }).collect_view()}
                 </select>
+                <div class="select-mobile" id=k2>
+                    {mobile_options.into_iter().map(|opt| {
+                        let val = opt.clone();
+                        let click_val = val.clone();
+                        let display = opt.clone();
+                        view! {
+                            <button
+                                type="button"
+                                class=move || {
+                                    if value.get() == val { "select-mobile-option selected" } else { "select-mobile-option" }
+                                }
+                                on:click=move |_| on_change.set(click_val.clone())
+                            >
+                                {display}
+                            </button>
+                        }
+                    }).collect_view()}
+                </div>
             }.into_any()
         },
         PlaceholderType::Boolean => {
