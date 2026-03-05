@@ -75,7 +75,7 @@ fn main() {
     let mut templates = Vec::new();
 
     if templates_dir.exists() {
-        for entry in glob::glob("templates/**/*.md").expect("glob pattern") {
+        for entry in glob::glob("templates/**/*.mdal").expect("glob pattern") {
             if let Ok(path) = entry {
                 let content = fs::read_to_string(&path).expect("read template");
                 let slug = path
