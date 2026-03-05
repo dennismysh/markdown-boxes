@@ -27,6 +27,7 @@ pub fn TemplateView() -> impl IntoView {
                 let title = tmpl.title.clone();
                 let body = tmpl.body.clone();
                 let placeholders = tmpl.placeholders.clone();
+                let tmpl_sections = tmpl.sections.clone();
                 let preview_src = tmpl.preview.map(|p| format!("{}/previews/{p}", crate::BASE_PATH));
 
                 let field_signals: Vec<(Placeholder, ReadSignal<String>, WriteSignal<String>)> =
@@ -61,6 +62,24 @@ pub fn TemplateView() -> impl IntoView {
                         <div class="template-layout">
                             <div class="template-form">
                                 <h3>"Customize"</h3>
+                                {if !tmpl_sections.is_empty() {
+                                    Some(view! {
+                                        <div class="section-badges">
+                                            {tmpl_sections.iter().map(|s| {
+                                                let name = s.name.clone();
+                                                let stype = format!("{:?}", s.section_type).to_lowercase();
+                                                view! {
+                                                    <span class="section-badge">
+                                                        <span class="section-badge-type">{stype}</span>
+                                                        {name}
+                                                    </span>
+                                                }
+                                            }).collect_view()}
+                                        </div>
+                                    })
+                                } else {
+                                    None
+                                }}
                                 {field_signals.into_iter().map(|(p, read, write)| {
                                     view! { <FormField placeholder=p value=read on_change=write /> }
                                 }).collect_view()}
