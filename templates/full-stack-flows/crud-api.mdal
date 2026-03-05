@@ -1,8 +1,14 @@
 ---
+type: application
+version: 1.0.0
+author: "@system/templates"
 title: "REST API with CRUD Endpoints"
 category: full-stack-flow
 tags: [api, rest, crud, backend, database]
 description: "Complete prompt for building a REST API with CRUD operations, validation, error handling, and database integration."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: resource_name
     label: "Resource Name (singular)"

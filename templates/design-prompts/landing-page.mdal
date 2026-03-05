@@ -1,8 +1,14 @@
 ---
+type: content
+version: 1.0.0
+author: "@system/templates"
 title: "Landing Page Design"
 category: design-prompt
 tags: [design, landing-page, ui, marketing]
 description: "AI prompt for designing a modern landing page with hero, features, and CTA sections."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: product_name
     label: "Product Name"

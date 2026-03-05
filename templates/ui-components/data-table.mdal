@@ -1,8 +1,14 @@
 ---
+type: application
+version: 1.0.0
+author: "@system/templates"
 title: "Data Table Component"
 category: ui-component
 tags: [table, data, component, ui]
 description: "Prompt for building a sortable, filterable data table component with pagination."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: framework
     label: "UI Framework"

@@ -1,8 +1,14 @@
 ---
+type: application
+version: 1.0.0
+author: "@system/templates"
 title: "CI/CD Pipeline Setup"
 category: implementation-plan
 tags: [ci, cd, devops, testing, deployment, github-actions]
 description: "Step-by-step plan for setting up a CI/CD pipeline with testing, linting, building, and automated deployment."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: project_name
     label: "Project Name"

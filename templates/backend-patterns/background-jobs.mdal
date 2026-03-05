@@ -1,8 +1,14 @@
 ---
+type: application
+version: 1.0.0
+author: "@system/templates"
 title: "Background Job Processing"
 category: backend-pattern
 tags: [jobs, queue, async, workers, backend]
 description: "Prompt for implementing a background job processing system with queues, retries, and monitoring."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: job_types
     label: "Job Types (comma-separated, e.g. email, pdf-generation, data-sync)"

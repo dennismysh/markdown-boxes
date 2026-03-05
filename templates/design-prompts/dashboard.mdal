@@ -1,8 +1,14 @@
 ---
+type: content
+version: 1.0.0
+author: "@system/templates"
 title: "Analytics Dashboard"
 category: design-prompt
 tags: [design, dashboard, charts, data-visualization, ui]
 description: "AI prompt for designing an analytics dashboard with charts, KPIs, and data filters."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: product_name
     label: "Product Name"

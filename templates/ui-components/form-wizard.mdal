@@ -1,8 +1,14 @@
 ---
+type: application
+version: 1.0.0
+author: "@system/templates"
 title: "Multi-Step Form Wizard"
 category: ui-component
 tags: [form, wizard, stepper, ui, component]
 description: "Prompt for building a multi-step form with validation, progress indicator, and state management."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: framework
     label: "UI Framework"

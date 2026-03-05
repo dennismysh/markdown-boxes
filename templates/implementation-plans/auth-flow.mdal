@@ -1,9 +1,15 @@
 ---
+type: application
+version: 1.0.0
+author: "@system/templates"
 title: "Authentication Flow"
 category: implementation-plan
 tags: [auth, jwt, backend, security]
 preview: auth-flow-hero.svg
 description: "Step-by-step plan for building JWT-based authentication with login, registration, and token refresh."
+outputs:
+  - format: html
+    target: web
 placeholders:
   - key: project_name
     label: "Project Name"
