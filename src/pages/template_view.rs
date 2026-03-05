@@ -4,6 +4,7 @@ use leptos_router::hooks::use_params_map;
 use wasm_bindgen::JsCast;
 use crate::components::form_field::FormField;
 use crate::components::markdown_preview::MarkdownPreview;
+use crate::models::filter::Filter;
 use crate::models::placeholder::Placeholder;
 use crate::store;
 use crate::substitute::substitute;
@@ -30,7 +31,11 @@ pub fn TemplateView() -> impl IntoView {
 
                 let field_signals: Vec<(Placeholder, ReadSignal<String>, WriteSignal<String>)> =
                     placeholders.into_iter().map(|p| {
-                        let (read, write) = signal(String::new());
+                        let default_val = p.filters.iter().find_map(|f| match f {
+                            Filter::Default(v) => Some(v.clone()),
+                            _ => None,
+                        }).unwrap_or_default();
+                        let (read, write) = signal(default_val);
                         (p, read, write)
                     }).collect();
 

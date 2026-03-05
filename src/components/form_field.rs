@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use crate::models::filter::Filter;
 use crate::models::placeholder::{Placeholder, PlaceholderType};
 
 #[component]
@@ -11,10 +12,20 @@ pub fn FormField(
     let key = placeholder.key.clone();
     let input_label = placeholder.label.clone();
 
+    let is_required = placeholder.filters.iter().any(|f| matches!(f, Filter::Required));
+    let max_length = placeholder.filters.iter().find_map(|f| match f {
+        Filter::MaxLength(n) => Some(*n),
+        _ => None,
+    });
+
+    let label_suffix = if is_required { " *" } else { "" };
+    let full_label = format!("{label_text}{label_suffix}");
+
     let input_view = match placeholder.kind {
         PlaceholderType::Text => {
             let ph = format!("Enter {}...", input_label);
             let k = key.clone();
+            let ml = max_length;
             view! {
                 <input
                     type="text"
@@ -22,12 +33,21 @@ pub fn FormField(
                     prop:value=value
                     on:input=move |ev| on_change.set(event_target_value(&ev))
                     placeholder=ph
+                    maxlength=ml.map(|n| n.to_string()).unwrap_or_default()
                 />
+                {ml.map(|max| {
+                    view! {
+                        <span class="char-counter">
+                            {move || format!("{}/{}", value.get().len(), max)}
+                        </span>
+                    }
+                })}
             }.into_any()
         },
         PlaceholderType::Multiline => {
             let ph = format!("Enter {}...", input_label);
             let k = key.clone();
+            let ml = max_length;
             view! {
                 <textarea
                     id=k
@@ -35,11 +55,23 @@ pub fn FormField(
                     on:input=move |ev| on_change.set(event_target_value(&ev))
                     placeholder=ph
                     rows=4
+                    maxlength=ml.map(|n| n.to_string()).unwrap_or_default()
                 />
+                {ml.map(|max| {
+                    view! {
+                        <span class="char-counter">
+                            {move || format!("{}/{}", value.get().len(), max)}
+                        </span>
+                    }
+                })}
             }.into_any()
         },
         PlaceholderType::Select => {
-            let options = placeholder.options.unwrap_or_default();
+            let filter_options = placeholder.filters.iter().find_map(|f| match f {
+                Filter::Options(opts) => Some(opts.clone()),
+                _ => None,
+            });
+            let options = filter_options.or(placeholder.options).unwrap_or_default();
             let k = key.clone();
             view! {
                 <select
@@ -72,9 +104,11 @@ pub fn FormField(
         },
     };
 
+    let field_class = if is_required { "form-field required" } else { "form-field" };
+
     view! {
-        <div class="form-field">
-            <label for=key>{label_text}</label>
+        <div class=field_class>
+            <label for=key>{full_label}</label>
             {input_view}
         </div>
     }
