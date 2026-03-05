@@ -27,14 +27,34 @@ struct OutputData {
     target: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-struct PlaceholderData {
+#[derive(Debug, Deserialize)]
+struct PlaceholderInput {
     key: String,
     label: String,
     #[serde(rename = "type")]
     kind: String,
     #[serde(default)]
     options: Option<Vec<String>>,
+    #[serde(default)]
+    filters: Vec<FilterInput>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum FilterInput {
+    Flag(String),
+    KeyValue(std::collections::HashMap<String, serde_json::Value>),
+}
+
+#[derive(Debug, Serialize)]
+struct PlaceholderData {
+    key: String,
+    label: String,
+    #[serde(rename = "type")]
+    kind: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    options: Option<Vec<String>>,
+    filters: Vec<serde_json::Value>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -54,7 +74,41 @@ struct Frontmatter {
     #[serde(default)]
     outputs: Vec<OutputData>,
     #[serde(default)]
-    placeholders: Vec<PlaceholderData>,
+    placeholders: Vec<PlaceholderInput>,
+}
+
+fn convert_placeholder(input: PlaceholderInput) -> PlaceholderData {
+    let filters = convert_filters(&input.filters);
+    PlaceholderData {
+        key: input.key,
+        label: input.label,
+        kind: input.kind,
+        options: input.options,
+        filters,
+    }
+}
+
+fn convert_filters(inputs: &[FilterInput]) -> Vec<serde_json::Value> {
+    inputs
+        .iter()
+        .filter_map(|f| match f {
+            FilterInput::Flag(s) if s == "required" => Some(serde_json::json!({"required": null})),
+            FilterInput::KeyValue(map) => {
+                if let Some(v) = map.get("max_length") {
+                    Some(serde_json::json!({"max_length": v}))
+                } else if let Some(v) = map.get("default") {
+                    Some(serde_json::json!({"default": v}))
+                } else if let Some(v) = map.get("options") {
+                    Some(serde_json::json!({"options": v}))
+                } else if map.contains_key("required") {
+                    Some(serde_json::json!({"required": null}))
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .collect()
 }
 
 fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
@@ -88,7 +142,7 @@ fn parse_template(content: &str, slug: &str) -> Option<TemplateData> {
         preview: frontmatter.preview,
         description: frontmatter.description,
         outputs: frontmatter.outputs,
-        placeholders: frontmatter.placeholders,
+        placeholders: frontmatter.placeholders.into_iter().map(convert_placeholder).collect(),
         body,
     })
 }
