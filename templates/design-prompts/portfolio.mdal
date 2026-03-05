@@ -1,0 +1,101 @@
+---
+type: application
+version: 1.0.0
+author: "@system/templates"
+title: "Portfolio Website"
+category: design-prompt
+tags: [portfolio, design, personal, website, mdal]
+description: "MDAL specification for a personal portfolio website with sections, conditionals, and styling."
+outputs:
+  - format: html
+    target: web
+placeholders:
+  - key: name
+    label: "Your Name"
+    type: text
+    filters:
+      - required
+      - max_length: 50
+  - key: tagline
+    label: "Tagline"
+    type: text
+    filters:
+      - required
+      - max_length: 150
+      - default: "Building things that matter"
+  - key: style
+    label: "Design Style"
+    type: select
+    filters:
+      - required
+      - options: [brutalist, minimalist, playful, professional]
+  - key: show_projects
+    label: "Show Projects Section"
+    type: boolean
+  - key: accent_color
+    label: "Accent Color"
+    type: text
+    filters:
+      - default: "#6366f1"
+---
+
+# {{name | required}}'s Portfolio
+
+## Section: Hero
+- type: component
+- layout: centered
+- required: true
+
+**{{tagline | default: "Building things that matter"}}**
+
+Welcome to my portfolio. I build things with care and intention.
+
+---
+
+## Section: About
+- type: component
+- layout: two_column
+
+A brief introduction about {{name}}.
+
+---
+
+{{#if show_projects}}
+## Projects
+
+Here are some things I've built:
+
+- Project Alpha — A full-stack web application
+- Project Beta — An open-source CLI tool
+- Project Gamma — A mobile app for productivity
+{{else}}
+_Projects section hidden. Toggle "Show Projects Section" to reveal._
+{{/if}}
+
+---
+
+## Section: Contact
+- type: component
+- layout: centered
+
+Get in touch with {{name}} at your convenience.
+
+---
+
+## Styling: DesignSystem
+- type: style
+- approach: {{style | options: [brutalist, minimalist, playful, professional]}}
+
+### Colors
+- primary: {{accent_color | default: "#6366f1"}}
+- background: #0f0f0f
+- text: #e8e8e8
+
+### Typography
+- headings: JetBrains Mono
+- body: Inter
+- base_size: 16px
+
+### Effects
+- borders: 2px solid
+- radius: 0px
