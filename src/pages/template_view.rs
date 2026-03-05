@@ -29,6 +29,7 @@ pub fn TemplateView() -> impl IntoView {
                 let body = tmpl.body.clone();
                 let placeholders = tmpl.placeholders.clone();
                 let tmpl_sections = tmpl.sections.clone();
+                let style_spec = tmpl.style_spec.clone();
                 let preview_src = tmpl.preview.map(|p| format!("{}/previews/{p}", crate::BASE_PATH));
 
                 let field_signals: Vec<(Placeholder, ReadSignal<String>, WriteSignal<String>)> =
@@ -89,7 +90,16 @@ pub fn TemplateView() -> impl IntoView {
                                     <ExportButtons content=preview_content />
                                 </div>
                             </div>
-                            <div class="template-preview-pane">
+                            <div class="template-preview-pane" style=style_spec.as_ref().map(|s| {
+                                let mut css = String::new();
+                                for (k, v) in &s.colors {
+                                    css.push_str(&format!("--mdal-color-{k}: {v}; "));
+                                }
+                                for (k, v) in &s.typography {
+                                    css.push_str(&format!("--mdal-font-{k}: {v}; "));
+                                }
+                                css
+                            }).unwrap_or_default()>
                                 <h3>"Preview"</h3>
                                 {preview_src.map(|src| view! {
                                     <div class="hero-diagram">
